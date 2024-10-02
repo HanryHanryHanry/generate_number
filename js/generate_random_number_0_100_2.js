@@ -161,16 +161,47 @@ let minCount=0;
 let isgenerate=false;
 const FirstTime500ms = 500;
 const secondTime200ms = 200;
-
+let generation_time1=0;
 let inputs = document.querySelectorAll(".unit");//lay tat ca cac input
+let hour=0;
+let minute=0;
 
 const max_number11=document.getElementById("max_number1");
 const min_number11=document.getElementById("min_number1");
+const generation_time = document.getElementById("generation_time");
 
+function updateClock(){
+    const now = new Date();
+    let hours = now.getHours();
+    const meridiem = hours> 12? "PM":"AM";
+    hours = hours %12||12;
+    hours = hours.toString().padStart(2,0);
+    const minuts = now.getMinutes().toString().padStart(2,0);
+    const seconds= now.getSeconds().toString().padStart(2,0);
+    const timeString =`${hours}:${minuts}:${seconds} ${meridiem}`;
+    document.getElementById("clock").textContent = timeString;
+    hour=hours;
+    minute=minuts;
+    if(hour===16 && minute===30){
+        bit_change_generate_number=true;
+    }
+    if(hour===17 &&minute==30){   //dung phat sinh mot so ngau nhien
+        clearInterval(timer);  // ngat timer
+        isRunning = false;
+    }
+    if(hour===18&&minute===30){
+        timer = setInterval(update, generation_time1); 
+        isRunning = false;
+    }
+}
+updateClock();
+setInterval(updateClock, 1000);
 
 function start(){
     maxCount =max_number11.value;
     minCount=min_number11.value;
+    generation_time1=generation_time.value;
+    if(generation_time1<100) generation_time1=100;
     if (!isRunning ){
         // startTime = Date.now() - elapsedTime;
         if(!isReset){
@@ -179,7 +210,7 @@ function start(){
             inputs[i].value=0
         }
     }
-        timer = setInterval(update, 500);  // sau moi 10 ms se thuc hien ham update mot lan
+        timer = setInterval(update, generation_time1);  // sau moi 200 ms se thuc hien ham update mot lan
         isRunning = true;
         isReset = true;
         // isgenerate=false;
@@ -187,27 +218,17 @@ function start(){
 }
 
 function stop(){
-    // if(isRunning){
         if(isRunning){
             clearInterval(timer);  // ngat timer
-            // elapsedTime = Date.now() - startTime;
             isRunning = false;
-            // isgenerate=true;
         }
-    // }
-
   }
 
 function reset(){
     isReset = false;
   }
-
   function update(){
-    
-        number_random = Math.floor(Math.random()*100);
-    
-     
-
+    number_random = Math.floor(Math.random()*100);
      maxCount =max_number11.value;
      minCount=min_number11.value;
       for(let i=0; i<100;i++){
@@ -218,19 +239,17 @@ function reset(){
          count_number2[i]=count_number1[i]
          count_number3[i]=count_number1[i]
       }
-
       count_number2.sort((a,b)=>{
         if(a>b) {return 1;}
         if(a<b) {return -1};
             return 0;
         });
-
      count_number3.sort((a,b)=>{
         if(a<b) {return 1;}
         if(a>b) {return -1};
             return 0;
         });
-      
+// tim mot phan tu nho hon 100;
 // tim 28 phan tu nho nhat
       for(let i=0; i<minCount;i++){
         for(let j=0; j<100;j++){
@@ -257,7 +276,6 @@ function reset(){
         }
         // inputs[index_min[i]].style.background = 'red';
     }
-
 // tim 28 phan tu lon nhat
 for(let i=0; i<maxCount;i++){
     for(let j=0; j<100;j++){
@@ -285,7 +303,6 @@ for(let i=0; i<maxCount;i++){
     // inputs[index_min[i]].style.background = 'red';
 }
 
-
        for(let i=0;i<100;i++){
         inputs[i].style.background = 'white';
        }
@@ -297,14 +314,10 @@ for(let i=0; i<maxCount;i++){
             inputs[index_min[i]].style.background = 'red';
             // inputs[index_max[i]].style.background = 'green';
         }
-        
         console.log(count_number2); 
         console.log(index_min); 
         console.log(count_number3); 
-
       }
-
-
    
     //  c1.value=number_random;
   
